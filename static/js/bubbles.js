@@ -1,5 +1,5 @@
-$(document).ready(function() {
-    $('#find-industry').on('click', function() {
+$(document).ready(function () {
+    $('#find-industry').on('click', function () {
         getRecords();
     });
     $('#find-category').on('click', function() {
@@ -7,36 +7,41 @@ $(document).ready(function() {
     });
 
     // slider
-    $("#date-slider").slider({
-        ticks: [1, 10, 20, 30, 40, 50],
-        ticks_positions: [1, 20, 40, 60, 80, 100],
-        ticks_labels: ['2015-05-24', '2015-08-02', '2015-10-11', '2015-12-20', '2016-02-28', '2016-05-08'],
-    });
-    $("#date-slider").on("slideStop", function(slideEvt) {
-        console.log(slideEvt.value);
-    });
+    createDateSlider();
 });
+
+function createDateSlider() {
+    var url = "/dates";
+    $.ajax({
+        url: url
+    })
+        .done(function (data) {
+            var number_of_dates = Number($('#date-slider').attr('data-number-of-dates'));
+            var tick_list = Array.apply(null, Array(number_of_dates)).map(function (_, i) {
+                return i + 1;
+            });
+            var date_strings = JSON.parse(data);
+            console.log(date_strings);
+            $("#date-slider").slider({
+
+                ticks: tick_list,
+                value: number_of_dates,
+                formatter: function (x) {
+                    return date_strings[x - 1]
+                }
+            });
+            $("#date-slider").on("change", function (slideEvt) {
+                getRecords();
+                console.log(slideEvt.value);
+            });
+        })
+}
 
 
 function getRecords() {
     var industry = $('#industry').val().split(' ').join('_').split('&').join('%26');
-    var url = "/records?industry=" + industry;
-//              "&date=" + date;
-    console.log(url);
-    $.ajax({
-        url: url
-    })
-     .done(function(data) {
-        var records = JSON.parse(data);
-        console.log(records);
-        activateD3(records, 'industry');
-     })
-}
-
-function getRecordsbyCategory() {
-    var category = $('#category').val().split(' ').join('_').split('&').join('%26');
-    var url = "/records-by-category?category=" + category;
-//              "&date=" + date;
+    var date_index = $('#date-slider').attr('value');
+    var url = "/records?industry=" + industry + "&date_index=" + date_index;
     console.log(url);
     $.ajax({
         url: url
@@ -51,7 +56,7 @@ function getRecordsbyCategory() {
 function activateD3(root, search_by){
     var chartContainer = '#' + search_by + '-chart'
     $(chartContainer).empty();
-    var diameter = 960,
+    var diameter = $(window).width(),
         format = d3.format(",d"),
         color = d3.scale.category20c();
 

@@ -4,7 +4,7 @@ import os
 
 from flask import Flask, json, jsonify, render_template, request, url_for
 from flask_bootstrap import Bootstrap
-from sqlalchemy import desc
+from sqlalchemy import desc, distinct
 
 from model import BomboraRecord, connect_to_db, db
 
@@ -59,13 +59,14 @@ def insights():
                      u'writing and editing']
     categories_list = [u'cloud', u'desktop', u'trends', u'video', u'social', u'sales', u'technology', u'gaming', u'hardware', u'diversity', u'web', u'agency/dept', u'financial', u'messaging', u'crm', u'insurance', u'data center', u'ecommerce', u'security', u'automotive', u'programming languages', u'disease control', u'productivity software', u'networking', u'smartphone', u'policy & culture', u'virtualization', u'operating system', u'medical association', u'personal computer', u'corporate finance', u'standards & regulatory', u'operations', u'wireless', u'benefits', u'tools & electronics', u'mobile', u'staff administration', u'email marketing', u'software engineering', u'compliance & governance', u'business finance', u'servers', u'wellness and safety', u'staff departure', u'aerospace', u'data management', u'it management', u'apis & services', u'government regulations', u'finance it', u'labor relations', u'medical research', u'email', u'training & development', u'supply chain', u'channels & types', u'medical education', u'place of work', u'content', u'medical specialty', u'branding', u'transactions & payments', u'administration', u'construction', u'personal protective equipment (ppe)', u'media & advertising', u'analytics & reporting', u'manufacturing', u'health', u'business solutions', u'campaigns', u'performance', u'medical treatment', u'hr tech', u'other', u'emerging tech', u'budgeting, planning & strategy', u'tablets & readers', u'auto brands', u'health tech', u'search engine', u'demand generation', u'certifications', u'urban planning', u'trading & investing', u'enterprise', u'gadgets', u'accounting', u'creativity software', u'energy', u'web browser', u'legal & regulatory', u'product development & qa', u'ad tech', u'professional services', u'monitoring', u'gaming consoles', u'health insurance', u'payroll & comp', u'programs and services', u'personal finance', u'employee services', u'device connectivity', u'strategy & analysis', u'telecommunications', u'website publishing', u'controls & standards', u'database', u'document management', u'search marketing', u'recruitment, hiring & onboarding', u'agencies', u'leadership & strategy', u'storage', u'patient management']
 
-    return render_template('insights.html', industries=industry_list, categories=categories_list)
+    return render_template('insights.html', industries=industry_list, categories=categories_list, number_of_dates=len(bombora_dates))
 
 
 @app.route('/records')
 def get_records():
-    # search_date = request.args.get('date')
-    search_date = datetime.datetime.strptime('2016-05-08', '%Y-%m-%d')
+    search_date_index = int(request.args.get('date_index'))
+    search_date = bombora_dates[search_date_index-1]
+    # search_date = datetime.datetime.strptime('2016-05-08', '%Y-%m-%d')
     industry = request.args.get('industry').replace('_', ' ').replace('%26', '&')
     all_records_per_date = BomboraRecord.query.filter_by(
         date=search_date.date()
@@ -121,4 +122,6 @@ if __name__ == "__main__":
     connect_to_db(app)
     PORT = int(os.environ.get("PORT", 5000))
     DEBUG = "NO_DEBUG" not in os.environ
+    global bombora_dates
+    bombora_dates = map(lambda x: x.date, BomboraRecord.query.distinct(BomboraRecord.date).all())
     app.run(debug=DEBUG, host="0.0.0.0", port=PORT)
