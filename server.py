@@ -4,6 +4,7 @@ import os
 
 from flask import Flask, json, jsonify, render_template, request, url_for
 from flask_bootstrap import Bootstrap
+from sqlalchemy import desc
 
 from model import BomboraRecord, connect_to_db, db
 
@@ -56,30 +57,62 @@ def insights():
                      u'transportation/trucking/railroad', u'utilities', u'venture capital & private equity',
                      u'veterinary', u'warehousing', u'wholesale', u'wine and spirits', u'wireless',
                      u'writing and editing']
+    categories_list = [u'cloud', u'desktop', u'trends', u'video', u'social', u'sales', u'technology', u'gaming', u'hardware', u'diversity', u'web', u'agency/dept', u'financial', u'messaging', u'crm', u'insurance', u'data center', u'ecommerce', u'security', u'automotive', u'programming languages', u'disease control', u'productivity software', u'networking', u'smartphone', u'policy & culture', u'virtualization', u'operating system', u'medical association', u'personal computer', u'corporate finance', u'standards & regulatory', u'operations', u'wireless', u'benefits', u'tools & electronics', u'mobile', u'staff administration', u'email marketing', u'software engineering', u'compliance & governance', u'business finance', u'servers', u'wellness and safety', u'staff departure', u'aerospace', u'data management', u'it management', u'apis & services', u'government regulations', u'finance it', u'labor relations', u'medical research', u'email', u'training & development', u'supply chain', u'channels & types', u'medical education', u'place of work', u'content', u'medical specialty', u'branding', u'transactions & payments', u'administration', u'construction', u'personal protective equipment (ppe)', u'media & advertising', u'analytics & reporting', u'manufacturing', u'health', u'business solutions', u'campaigns', u'performance', u'medical treatment', u'hr tech', u'other', u'emerging tech', u'budgeting, planning & strategy', u'tablets & readers', u'auto brands', u'health tech', u'search engine', u'demand generation', u'certifications', u'urban planning', u'trading & investing', u'enterprise', u'gadgets', u'accounting', u'creativity software', u'energy', u'web browser', u'legal & regulatory', u'product development & qa', u'ad tech', u'professional services', u'monitoring', u'gaming consoles', u'health insurance', u'payroll & comp', u'programs and services', u'personal finance', u'employee services', u'device connectivity', u'strategy & analysis', u'telecommunications', u'website publishing', u'controls & standards', u'database', u'document management', u'search marketing', u'recruitment, hiring & onboarding', u'agencies', u'leadership & strategy', u'storage', u'patient management']
 
-    return render_template('insights.html', industries=industry_list)
+    return render_template('insights.html', industries=industry_list, categories=categories_list)
 
 
 @app.route('/records')
 def get_records():
     # search_date = request.args.get('date')
-    search_date = datetime.datetime.strptime('2015-05-08', '%Y-%m-%d')
-    print search_date
+    search_date = datetime.datetime.strptime('2016-05-08', '%Y-%m-%d')
     industry = request.args.get('industry').replace('_', ' ').replace('%26', '&')
-    print type(BomboraRecord.query.first().date)
-    all_records_per_date = BomboraRecord.query.filter_by(date=search_date).all()
+    all_records_per_date = BomboraRecord.query.filter_by(
+        date=search_date.date()
+    ).order_by(desc(BomboraRecord.count)).limit(200)
 
     all_records = {
         'industry': industry,
         'children': []
     }
 
+    all_categories = []
+
     for record in all_records_per_date:
-        print record.json_data
-        print record.date
-        if record.json_data['industry'] == industry:
-            all_records['children'].append(record.json_data)
-    print all_records
+        if record.category not in all_categories:
+            all_categories.append(record.category)
+        record_dict = {
+            'count': record.count,
+            'category': record.category,
+            'average_score': int(record.average_score),
+        }
+        all_records['children'].append(record_dict)
+
+    return json.dumps(all_records)
+
+
+@app.route('/records-by-category')
+def get_records_by_category():
+    search_date = datetime.datetime.strptime('2016-05-08', '%Y-%m-%d')
+    category = request.args.get('category').replace('_', ' ').replace('%26', '&')
+    all_records_per_cat = BomboraRecord.query.filter_by(
+        date=search_date.date(), category=category
+    ).order_by(desc(BomboraRecord.count)).all()
+
+    all_records = {
+        'category': category,
+        'children': []
+    }
+
+    for record in all_records_per_cat:
+        record_dict = {
+            'count': record.count,
+            'industry': record.industry,
+            'category': record.category,
+            'average_score': int(record.average_score),
+        }
+        all_records['children'].append(record_dict)
+
     return json.dumps(all_records)
 
 

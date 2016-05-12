@@ -2,6 +2,9 @@ $(document).ready(function() {
     $('#find-industry').on('click', function() {
         getRecords();
     });
+    $('#find-category').on('click', function() {
+        getRecordsbyCategory();
+    });
 
     // slider
     $("#date-slider").slider({
@@ -26,12 +29,28 @@ function getRecords() {
      .done(function(data) {
         var records = JSON.parse(data);
         console.log(records);
-        activateD3(records);
+        activateD3(records, 'industry');
      })
 }
 
-function activateD3(root){
-    $('#chart svg').remove();
+function getRecordsbyCategory() {
+    var category = $('#category').val().split(' ').join('_').split('&').join('%26');
+    var url = "/records-by-category?category=" + category;
+//              "&date=" + date;
+    console.log(url);
+    $.ajax({
+        url: url
+    })
+     .done(function(data) {
+        var records = JSON.parse(data);
+        console.log(records);
+        activateD3(records, 'category');
+     })
+}
+
+function activateD3(root, search_by){
+    var chartContainer = '#' + search_by + '-chart'
+    $(chartContainer).empty();
     var diameter = 960,
         format = d3.format(",d"),
         color = d3.scale.category20c();
@@ -41,7 +60,7 @@ function activateD3(root){
         .size([diameter, diameter])
         .padding(1.5);
 
-    var svg = d3.select("#chart").append("svg")
+    var svg = d3.select(chartContainer).append("svg")
         .attr("width", diameter + 400)
         .attr("height", diameter)
         .attr("class", "bubble");
@@ -59,7 +78,7 @@ function activateD3(root){
         .text("tooltip");
 
     var node = svg.selectAll(".node")
-      .data(bubble.nodes(classes(root))
+      .data(bubble.nodes(classes(root, search_by))
       .filter(function(d) { return !d.children; }))
     .enter().append("g")
       .attr("class", "node")
@@ -104,15 +123,24 @@ function bucketScore(score) {
 }
 
 // Returns a flattened hierarchy containing all leaf nodes under the root.
-function classes(root) {
+function classes(root, search_by) {
   var classes = [];
 
-  function recurse(industry, node) {
-    if (node.children) node.children.forEach(function(child) { recurse(node.name, child); });
-    else classes.push({packageName: bucketScore(node.average_score), className: node.category, value: node.count});
+  function recurse(search_by, industry, node) {
+    var show = false;
+
+    if (search_by === 'industry') {
+      show = node.category;
+    } else if (search_by === 'category') {
+      show = node.industry;
+    }
+
+    if (node.children) node.children.forEach(function(child) { recurse(search_by, node.name, child); });
+    else classes.push({packageName: bucketScore(node.average_score), className: show, value: node.count});
   }
 
-  recurse(null, root);
+
+  recurse(search_by, null, root);
   return {children: classes};
 }
 

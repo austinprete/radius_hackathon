@@ -17,7 +17,7 @@ body {
     margin-top: 70px;
 }
 
-.topics-container {
+.categories-container {
     margin-right: 150px;
     float: right;
 }
@@ -28,7 +28,7 @@ body {
 }
 
 .industries-container > input,
-.topics-container > input {
+.categories-container > input {
     width: 250px;
     border: 2px solid #B0C97C;
 }
@@ -55,4 +55,8 @@ body {
 
 .nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
     background-color: #B0C97C;
+}
+
+.slider.slider-horizontal {
+    width: 100%;
 }

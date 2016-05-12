@@ -8,7 +8,7 @@
       <a href="#by-industry" aria-controls="by-industry" role="tab" data-toggle="tab">Choose Industry</a>
     </li>
     <li role="presentation">
-      <a href="#by-topic" aria-controls="by-topic" role="tab" data-toggle="tab">Choose Topic</a>
+      <a href="#by-category" aria-controls="by-category" role="tab" data-toggle="tab">Choose category</a>
     </li>
   </ul>
   <!--nav pill panes-->
@@ -24,20 +24,22 @@
         </datalist>
       </div><br><br>
       <div class="container">
-        <input id="date-slider" type="text" data-slider-orientation="vertical"/>
+        <input id="date-slider" type="text" data-slider-orientation="horizontal"/>
       </div>
-      <section id="chart"></section>
+      <section id="industry-chart"></section>
     </div>
     <!-- separates tabs -->
-    <div role="tabpanel" class="tab-pane" id="by-topic">
-      <div class="topics-container">
-        <input list="topics" name="topic" id="topic">
-        <datalist id="topics">
-
+    <div role="tabpanel" class="tab-pane" id="by-category">
+      <div class="categories-container">
+        <input list="categories" name="category" id="category">
+        <datalist id="categories">
+          {% for item in categories %}
+            <option value="{{ item }}">
+          {% endfor %}
         </datalist>
-        <button id="find-topic">Go</button>
+        <button id="find-category">Go</button>
       </div>
-      <section id="topic-chart"></section>
+      <section id="category-chart"></section>
     </div>
   </div>
 {% endblock %}
