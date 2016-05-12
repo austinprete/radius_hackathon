@@ -38,10 +38,26 @@ function createDateSlider() {
 }
 
 
+
 function getRecords() {
     var industry = $('#industry').val().split(' ').join('_').split('&').join('%26');
     var date_index = $('#date-slider').attr('value');
     var url = "/records?industry=" + industry + "&date_index=" + date_index;
+    console.log(url);
+    $.ajax({
+        url: url
+    })
+     .done(function(data) {
+        var records = JSON.parse(data);
+        console.log(records);
+        activateD3(records, 'industry');
+     })
+}
+
+function getRecordsbyCategory() {
+    var category = $('#category').val().split(' ').join('_').split('&').join('%26');
+    var url = "/records-by-category?category=" + category;
+//              "&date=" + date;
     console.log(url);
     $.ajax({
         url: url
