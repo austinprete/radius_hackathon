@@ -1,14 +1,23 @@
 $(document).ready(function () {
     $('#find-industry').on('click', function () {
         getRecords();
+        $("#date-slider").off().on("change", function (slideEvt) {
+                getRecords();
+                console.log(slideEvt.value);
+            });
     });
-    $('#find-category').on('click', function() {
+    $('#find-category').on('click', function () {
         getRecordsbyCategory();
+        $("#date-slider").off().on("change", function (slideEvt) {
+            getRecordsbyCategory();
+            console.log(slideEvt.value);
+        });
     });
 
     // slider
     createDateSlider();
 });
+
 
 function createDateSlider() {
     var url = "/dates";
@@ -18,7 +27,7 @@ function createDateSlider() {
         .done(function (data) {
             var number_of_dates = Number($('#date-slider').attr('data-number-of-dates'));
             var tick_list = Array.apply(null, Array(number_of_dates)).map(function (_, i) {
-                return i + 1;
+                return i;
             });
             var date_strings = JSON.parse(data);
             console.log(date_strings);
@@ -27,7 +36,7 @@ function createDateSlider() {
                 ticks: tick_list,
                 value: number_of_dates,
                 formatter: function (x) {
-                    return date_strings[x - 1]
+                    return date_strings[x]
                 }
             });
             $("#date-slider").on("change", function (slideEvt) {
@@ -56,8 +65,8 @@ function getRecords() {
 
 function getRecordsbyCategory() {
     var category = $('#category').val().split(' ').join('_').split('&').join('%26');
-    var url = "/records-by-category?category=" + category;
-//              "&date=" + date;
+    var date_index = $('#date-slider').attr('value');
+    var url = "/records-by-category?category=" + category + "&date_index=" + date_index;
     console.log(url);
     $.ajax({
         url: url
@@ -70,7 +79,7 @@ function getRecordsbyCategory() {
 }
 
 function activateD3(root, search_by){
-    var chartContainer = '#' + search_by + '-chart'
+    var chartContainer = '#' + search_by + '-chart';
     $(chartContainer).empty();
     var diameter = $(window).width(),
         format = d3.format(",d"),
@@ -107,7 +116,7 @@ function activateD3(root, search_by){
 
     node.append("circle")
       .attr("r", function(d) { return d.r; })
-      .style("fill", function(d) { return d.packageName; })
+      .style("fill", function(d) { return ("hsl(120, 50%, " + ((d.average_score) + 38) + "%)")})
       .on("mouseover", function(d) {
               tooltip.text(d.className + ": " + format(d.value));
               tooltip.style("visibility", "visible");
@@ -129,18 +138,18 @@ function activateD3(root, search_by){
     d3.select(self.frameElement).style("height", diameter + "px");
 }
 
-function bucketScore(score) {
-  if (score < 21) {
-    return "#EDFFBE";
-  } else if ( 20 < score && score < 41 ) {
-    return "#DBEEAA";
-  } else if ( 40 < score && score < 61 ) {
-    return "#B0C97C";
-  } else if ( 60 < score && score < 81 ) {
-    return "#99B363";
-  } else {
-    return "#799242";
-  }
+// function bucketScore(score) {
+  // if (score < 21) {
+  //   return "#EDFFBE";
+  // } else if ( 20 < score && score < 41 ) {
+  //   return "#DBEEAA";
+  // } else if ( 40 < score && score < 61 ) {
+  //   return "#B0C97C";
+  // } else if ( 60 < score && score < 81 ) {
+  //   return "#99B363";
+  // } else {
+  //   return "#799242";
+//   // }
 }
 
 // Returns a flattened hierarchy containing all leaf nodes under the root.
@@ -157,7 +166,7 @@ function classes(root, search_by) {
     }
 
     if (node.children) node.children.forEach(function(child) { recurse(search_by, node.name, child); });
-    else classes.push({packageName: bucketScore(node.average_score), className: show, value: node.count});
+    else classes.push({average_score: node.average_score, className: show, value: node.count});
   }
 
 

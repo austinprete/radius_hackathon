@@ -17,18 +17,8 @@ body {
     margin-top: 70px;
 }
 
-.topics-container {
-    margin-right: 150px;
-    float: right;
-}
-
-.industries-container {
-    float: left;
-    margin-left: 150px;
-}
-
 .industries-container > input,
-.topics-container > input {
+.categories-container > input {
     width: 250px;
     border: 2px solid #B0C97C;
 }

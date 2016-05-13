@@ -30,7 +30,7 @@ def connect_to_db(app):
     """Connect the database to our Flask app."""
 
     DATABASE_URL = os.environ.get("DATABASE_URL",
-                                  "postgresql://localhost/rad-insights")
+                                  "postgresql://localhost/hackathon_db")
     app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
     db.app = app
     db.init_app(app)

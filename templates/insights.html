@@ -12,6 +12,10 @@
     </li>
   </ul>
   <!--nav pill panes-->
+    <div class="container">
+        <input id="date-slider" type="text" data-slider-orientation="horizontal"
+               data-number-of-dates="{{ number_of_dates }}"/>
+      </div>
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane fade in active" id="by-industry">
       <div class="container industries-container">
@@ -23,23 +27,19 @@
           {% endfor %}
         </datalist>
       </div><br><br>
-      <div class="container">
-        <input id="date-slider" type="text" data-slider-orientation="horizontal"
-               data-number-of-dates="{{ number_of_dates }}"/>
-      </div>
       <section id="industry-chart"></section>
     </div>
     <!-- separates tabs -->
     <div role="tabpanel" class="tab-pane" id="by-category">
-      <div class="categories-container">
+      <div class="container categories-container">
+      <button id="find-category">Go</button>
         <input list="categories" name="category" id="category">
         <datalist id="categories">
           {% for item in categories %}
             <option value="{{ item }}">
           {% endfor %}
         </datalist>
-        <button id="find-category">Go</button>
-      </div>
+      </div><br><br>
       <section id="category-chart"></section>
     </div>
   </div>

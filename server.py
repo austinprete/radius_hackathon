@@ -98,7 +98,6 @@ def get_dates():
 def get_records():
     search_date_index = int(request.args.get('date_index'))
     search_date = bombora_dates[search_date_index-1]
-    # search_date = datetime.datetime.strptime('2016-05-08', '%Y-%m-%d')
     industry = request.args.get('industry').replace('_', ' ').replace('%26', '&')
     all_records_per_date = BomboraRecord.query.filter_by(
         date=search_date, industry=industry
@@ -126,11 +125,12 @@ def get_records():
 
 @app.route('/records-by-category')
 def get_records_by_category():
-    search_date = datetime.datetime.strptime('2016-05-08', '%Y-%m-%d')
+    search_date_index = int(request.args.get('date_index'))
+    search_date = bombora_dates[search_date_index - 1]
     category = request.args.get('category').replace('_', ' ').replace('%26', '&')
     all_records_per_cat = BomboraRecord.query.filter_by(
-        date=search_date.date(), category=category
-    ).order_by(desc(BomboraRecord.count)).all()
+        date=search_date, category=category
+    ).order_by(desc(BomboraRecord.count)).limit(100)
 
     all_records = {
         'category': category,
