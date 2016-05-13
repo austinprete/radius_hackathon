@@ -1,12 +1,13 @@
 # coding=utf-8
 import datetime
 import os
+from random import randint
 
 from flask import Flask, json, render_template, request
 from flask_bootstrap import Bootstrap
 from sqlalchemy import desc
 
-from model import BomboraRecord, connect_to_db
+from model import BomboraRecord, connect_to_db, DashboardBlocks
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -147,6 +148,28 @@ def get_records_by_category():
         all_records['children'].append(record_dict)
 
     return json.dumps(all_records)
+
+
+@app.route('/players-dashboard')
+def player_dashboard():
+    industry = request.args.get('industry')
+    if industry:
+        one_industry = DashboardBlocks.query.filter_by(industry=industry).first()
+    else:
+        rand_id = randint(1, 23)
+        print "RAND INT", rand_id
+        one_industry = DashboardBlocks.query.get(rand_id)
+
+    dashboard_block = {
+        'industry': one_industry.industry,
+        'market_cap': one_industry.market_cap,
+        'cap_raised': one_industry.cap_raised,
+        'cagr': one_industry.cagr,
+        'opportunity': one_industry.opportunity
+    }
+
+    return render_template('player-dashboard.html',
+                           dashboard_block=dashboard_block)
 
 if __name__ == "__main__":
 

@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+{{ super() }}
+{% set bar_class = cycler('color1', 'color2', 'color3', 'color4') %}
+<div class="container-fluid dashboard-container">
+  <div class="row">
+    <h3 class="dashboard-header">{{ dashboard_block.industry }}</h3>
+    <hr class="dashboard-hr">
+    <div class="col-sm-3">
+      <div class="dashboard-block {{ bar_class.next() }}">
+        <h4 class="block-header">Total Market Cap</h4>
+        <h1 class="block-body">${{ dashboard_block.market_cap // 1000000000 }}</h1>
+        <p class="block-footer">BILLION</p>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="dashboard-block {{ bar_class.next() }}">
+        <h4 class="block-header">Capital Raised in Q1</h4>
+        <h1 class="block-body">${{ dashboard_block.cap_raised // 1000 }}</h1>
+        <p class="block-footer">THOUSAND</p>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="dashboard-block {{ bar_class.next() }}">
+        <h4 class="block-header">Market Opportunity</h4>
+         <h1 class="block-body">{{ dashboard_block.opportunity }}</h1>
+        <p class="block-footer">BUSINESSES</p>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="dashboard-block {{ bar_class.next() }}">
+        <h4 class="block-header">Compound Annual Growth Rate</h4>
+        <h1 class="block-body">{{ dashboard_block.cagr }} %</h1>
+        <p class="block-footer">OVER 2016-2020</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

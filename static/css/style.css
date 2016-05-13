@@ -54,3 +54,64 @@ body {
 .slider-tick.round {
     visibility: hidden;
 }
+
+.dashboard-container {
+    margin: 100px;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-top: 0px;
+}
+
+.dashboard-hr {
+    width: 500px;
+    border-top: 3px solid #5B9BD1;
+}
+
+.dashboard-block {
+    text-align: center;
+    border: 2px solid #ccc;
+    height: 200px;
+    background-color: #f7f7f8;
+    border-bottom: 3px solid #5B9BD1;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
+.block-header {
+    padding: 5px;
+}
+
+.block-body {
+    vertical-align: middle;
+    margin-top: 29px;
+    font-size: 50px;
+}
+
+.block-footer {
+    margin-top: 30px;
+    bottom: 5px;
+    font-size: 20px;
+}
+
+.color1 {
+    border-bottom: 6px solid #7A6FCA;
+}
+
+.color2 {
+    border-bottom: 6px solid #7CE2AD;
+}
+
+.color3 {
+    border-bottom: 6px solid #EE91BF;
+}
+
+.color4 {
+    border-bottom: 6px solid #E3EE82;
+}
+
+.navbar-brand {
+    font-size: 23px;
+    font-family: 'Fjalla One', Arial, serif;
+}

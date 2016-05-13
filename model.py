@@ -24,7 +24,21 @@ class BomboraRecord(db.Model):
         return "<Bombora JSON Record ID: %s>" % self.id
 
 
-#########THIS CONNECTS TO DATABASE SO WE CAN WORK INTERACTIVELY IN CONSOLE
+class DashboardBlocks(db.Model):
+    """Facts about industries"""
+
+    __tablename__ = "dashboard_blocks"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    industry = db.Column(db.Text, nullable=False, unique=True)
+    market_cap = db.Column(db.Integer, nullable=False)
+    cap_raised = db.Column(db.Integer, nullable=False)
+    opportunity = db.Column(db.Integer, nullable=False)
+    cagr = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return "<Industry Facts: %s>" % self.id
+
 
 def connect_to_db(app):
     """Connect the database to our Flask app."""
