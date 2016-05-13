@@ -16,7 +16,7 @@ bombora_dates = []
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return insights()
 
 
 @app.route('/insights', methods=['GET'])

@@ -24,7 +24,7 @@ d3.legend = function(g) {
       })
 
     items = d3.entries(items).sort(function(a,b) { return a.value.pos-b.value.pos})
-    var font_size = 23;
+    var font_size = 18;
 
     li.selectAll("text")
         .data(items,function(d) { return d.key})
@@ -47,8 +47,8 @@ d3.legend = function(g) {
 
     // Reposition and resize the box
     var lbbox = li[0][0].getBBox();
-    var x_offset = 20;
-    var y_offset = -300;
+    var x_offset = 5;
+    var y_offset = -290;
         li.selectAll("text").attr("x", x_offset + 15).attr("y", function(d,i) { return y_offset + font_size*i});
       li.selectAll("circle").attr("cx", x_offset).attr("cy",function(d,i) { return (y_offset - (font_size*.34)) + font_size*i})
     lb.attr("x",(lbbox.x-legendPadding)+x_offset)
