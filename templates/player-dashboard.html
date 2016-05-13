@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    {{ super() }}
+    {% set bar_class = cycler('color1', 'color2', 'color3', 'color4') %}
+    <div class="container-fluid dashboard-container">
+        <div class="container industries-container"><br>
+            <input list="industries" name="dashboard-industry" id="dashboard-industry"
+                   placeholder="Type or Select an Industry">
+            <datalist id="industries">
+                {% for item in industries_list %}
+                    <option value="{{ item }}">
+                {% endfor %}
+            </datalist>
+            <button id="find-industry-dashboard">Go</button>
+        </div>
+        <br><br>
+        <div class="row">
+            <h3 class="dashboard-header">{{ dashboard_block.industry }}</h3>
+            <hr class="dashboard-hr">
+            <div class="col-sm-3">
+                <div class="dashboard-block {{ bar_class.next() }}">
+                    <h4 class="block-header">Total Market Cap</h4>
+                    <h1 class="block-body" id="market-cap">
+                        ${{ dashboard_block.market_cap // 1000000000 if dashboard_block.market_cap else '--' }}</h1>
+                    <p class="block-footer">BILLION</p>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="dashboard-block {{ bar_class.next() }}">
+                    <h4 class="block-header">Capital Raised in Q1</h4>
+                    <h1 class="block-body" id="cap-raised">
+                        ${{ dashboard_block.cap_raised // 1000000 if dashboard_block.cap_raised else '--' }}</h1>
+                    <p class="block-footer">MILLION</p>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="dashboard-block {{ bar_class.next() }}">
+                    <h4 class="block-header">Forecasted Spend in 2018</h4>
+                    <h1 class="block-body" id="forecast">${{ dashboard_block.forecast_spend or '--' }}</h1>
+                    <p class="block-footer">BILLION</p>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="dashboard-block {{ bar_class.next() }}">
+                    <h4 class="block-header">Compound Annual Growth Rate</h4>
+                    <h1 class="block-body" id="cagr">{{ dashboard_block.cagr or '--' }} %</h1>
+                    <p class="block-footer">OVER 2016-2020</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <select style="margin-left: 40px" id="category-input">
+        {% for category in categories %}
+            <option value="{{ category }}">{{ category }}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+    <div style="padding-left: 40px;" id="chart-container">
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="../static/js/players_chart.js"></script>
+    <script src="../static/js/d3.legend.js"></script>
+{#    <script src="../static/js/bubbles.js"></script>#}
+{% endblock %}

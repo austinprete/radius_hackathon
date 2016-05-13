@@ -24,6 +24,31 @@ class BomboraRecord(db.Model):
         return "<Bombora JSON Record ID: %s>" % self.id
 
 
+class PlayerRecord(db.Model):
+
+    __tablename__ = 'players'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    subcategory = db.Column(db.TEXT, nullable=False)
+    company_name = db.Column(db.TEXT, nullable=False)
+    market_share = db.Column(db.TEXT, nullable=False)
+
+
+class DashboardBlocks(db.Model):
+    """Facts about industries"""
+
+    __tablename__ = "dashboard_blocks"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    industry = db.Column(db.Text, nullable=False, unique=True)
+    market_cap = db.Column(db.Integer)
+    cap_raised = db.Column(db.Integer)
+    forecast_spend = db.Column(db.Integer)
+    cagr = db.Column(db.Float)
+
+    def __repr__(self):
+        return "<Industry Facts: %s>" % self.id
+
 #########THIS CONNECTS TO DATABASE SO WE CAN WORK INTERACTIVELY IN CONSOLE
 
 def connect_to_db(app):

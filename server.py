@@ -1,12 +1,12 @@
 # coding=utf-8
-import datetime
 import os
+from random import randint
 
 from flask import Flask, json, render_template, request
 from flask_bootstrap import Bootstrap
 from sqlalchemy import desc
 
-from model import BomboraRecord, connect_to_db
+from model import BomboraRecord, connect_to_db, DashboardBlocks, PlayerRecord
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -94,10 +94,11 @@ def get_dates():
     date_strings = map(lambda x: x.strftime('%Y-%m-%d'), bombora_dates)
     return json.dumps(date_strings)
 
+
 @app.route('/records')
 def get_records():
     search_date_index = int(request.args.get('date_index'))
-    search_date = bombora_dates[search_date_index-1]
+    search_date = bombora_dates[search_date_index - 1]
     industry = request.args.get('industry').replace('_', ' ').replace('%26', '&')
     all_records_per_date = BomboraRecord.query.filter_by(
         date=search_date, industry=industry
@@ -148,8 +149,98 @@ def get_records_by_category():
 
     return json.dumps(all_records)
 
-if __name__ == "__main__":
 
+@app.route('/market-share')
+def get_market_share_for_subcategory():
+    # 'Frameworks Programming Language'
+    subcategory = request.args.get('subcategory')
+    print subcategory
+    players_json_records = []
+    for record in PlayerRecord.query.filter_by(subcategory=subcategory).all():
+        record_dict = {
+            'subcategory': record.subcategory,
+            'company_name': record.company_name,
+            'market_share': int(record.market_share.replace(',', '')),
+        }
+        players_json_records.append(record_dict)
+    sorted_players = sorted(players_json_records, key=lambda x: x.get('market_share'), reverse=True)
+    top_ten_players = sorted_players[:10]
+    other_players = sorted_players[10:]
+    if other_players:
+        total_other_market_share = sum(map(lambda x: x.get('market_share'), other_players))
+        other_player_dict = {
+            'subcategory': subcategory,
+            'company_name': 'Other',
+            'market_share': total_other_market_share,
+        }
+        top_ten_players.append(other_player_dict)
+    return json.dumps(top_ten_players)
+
+
+@app.route('/player_dashboard')
+def player_dashboard():
+    industries_list = [u'Semiconductors', u'Advertising', u'Financial Services', u'Software', u'Pharma & Biotech',
+                       u'Aerospace', u'Agricultural Chemicals', u'Air Freight/Delivery Services', u'Aluminum',
+                       u'Apparel', u'Auto', u'Beverages (Production/Distribution)', u'Books', u'Broadcasting',
+                       u'Building', u'Business Services', u'Catalog/Specialty Distribution',
+                       u'Clothing/Shoe/Accessory Stores', u'Coal Mining', u'Commercial Banks', u'Computer Hardware',
+                       u'Consumer', u'Containers/Packaging', u'Diversified Commercial Services', u'EDP Services',
+                       u'Electronic', u'Engineering / Mfg etc', u'Environmental Services', u'Farming/Seeds/Milling',
+                       u'Fluid Controls', u'Food', u'Forest Products',
+                       u'General Bldg Contractors - Nonresidential Bldgs', u'Home Furnishings', u'Homebuilding',
+                       u'Hospital/Nursing Management', u'Hotels/Resorts', u'Major Chemicals', u'Marine Transportation',
+                       u'Meat/Poultry/Fish', u'Medical Specialities', u'Medical/Dental Instruments',
+                       u'Medical/Nursing Services', u'Metal Fabrications', u'Military/Government/Technical',
+                       u'Mining & Quarrying of Nonmetallic Minerals (No Fuels)', u'Miscellaneous',
+                       u'Miscellaneous Manufacturing Industries', u'Motor Vehicles', u'Movies/Entertainment',
+                       u'Multi-Sector Companies', u'Natural Gas Distribution', u'Newspapers/Magazines',
+                       u'Office Equipment/Supplies/Services', u'Oil', u'Ophthalmic Goods', u'Ordinance And Accessories',
+                       u'Other Specialty Stores', u'Other Transportation', u'Package Goods/Cosmetics',
+                       u'Paints/Coatings', u'Paper', u'Plastic Products', u'Pollution Control Equipment',
+                       u'Power Generation', u'Precious Metals', u'Precision Instruments', u'Professional Services',
+                       u'Property-Casualty Insurers', u'Publishing',
+                       u'Radio And Television Broadcasting And Communications Equipment', u'Railroads', u'Real Estate',
+                       u'Real Estate Investment Trusts', u'Recreational Products/Toys', u'Rental/Leasing Companies',
+                       u'Restaurants', u'Retail', u'Savings Institutions', u'Services-Misc. Amusement & Recreation',
+                       u'Shoe Manufacturing', u'Specialty Chemicals', u'Specialty Insurers', u'Steel/Iron Ore',
+                       u'Telecommunications Equipment', u'Television Services', u'Textiles', u'Tools/Hardware',
+                       u'Transportation Services', u'Trucking Freight/Courier Services', u'Water Supply',
+                       u'Wholesale Distributors']
+    rand_id = randint(1, 4)
+    categories = map(lambda x: x.subcategory, PlayerRecord.query.distinct(PlayerRecord.subcategory).all())
+    print "RAND INT", rand_id
+    one_industry = DashboardBlocks.query.get(rand_id)
+
+    dashboard_block = {
+        'industry': one_industry.industry,
+        'market_cap': one_industry.market_cap,
+        'cap_raised': one_industry.cap_raised,
+        'cagr': one_industry.cagr,
+        'forecast_spend': one_industry.forecast_spend
+    }
+
+    return render_template('player-dashboard.html',
+                           dashboard_block=dashboard_block, industries_list=industries_list,
+                           categories=categories)
+
+
+@app.route('/get-dashboard')
+def get_dashboard():
+    industry = request.args.get('industry').replace('_', ' ').replace('%26', '&')
+    one_industry = DashboardBlocks.query.filter_by(industry=industry).first()
+
+    dashboard_block = {
+        'industry': one_industry.industry,
+        'market_cap': one_industry.market_cap,
+        'cap_raised': one_industry.cap_raised,
+        'cagr': one_industry.cagr,
+        'forecast_spend': one_industry.forecast_spend
+    }
+
+    return json.dumps(dashboard_block)
+
+
+if __name__ == "__main__":
     connect_to_db(app)
     PORT = int(os.environ.get("PORT", 5000))
     DEBUG = "NO_DEBUG" not in os.environ

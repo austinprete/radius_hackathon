@@ -13,7 +13,9 @@ $(document).ready(function () {
             console.log(slideEvt.value);
         });
     });
-
+    // $('#find-industry-dashboard').on('click', function() {
+    //     getDashboardBlocks();
+    // })
     // slider
     createDateSlider();
 });
@@ -124,10 +126,12 @@ function activateD3(root, search_by){
       .on("mousemove", function() {
           return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
       })
-      .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
-      .on("click", function(d) {
-          showDetails(d);
-      });
+      .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+//      .on("click", function(d) {
+//          showDetails(d);
+//          console.log(d.count);
+//          console.log(d.average_score);
+//      });
 
     node.append("text")
       .attr("dy", ".3em")
@@ -174,6 +178,79 @@ function classes(root, search_by) {
   return {children: classes};
 }
 
-function showDetails(d) {
-    console.log(d.value);
-}
+//function showDetails(d) {
+//    var industry = d.industry;
+//    var category = d.category;
+//    var trendModal = $('#trend-modal');
+//    getTrends(industry, category);
+//    trendModal.modal('show');
+//}
+
+//function getTrends(industry, category) {
+//    var url = "/records-trend?category=" + category +
+//              "&industry=" + industry;
+//    console.log(url);
+//    $.ajax({
+//        url: url
+//    })
+//     .done(function(data) {
+//        var records = JSON.parse(data);
+//        console.log(records);
+//        InitChart(records);
+//     })
+//}
+//
+//// line chart of trend
+//function InitChart(records) {
+//    console.log('initializing line chart');
+//    var vis = d3.select("#trend-chart"),
+//        WIDTH = 500,
+//        HEIGHT = 500,
+//        MARGINS = {
+//            top: 20,
+//            right: 20,
+//            bottom: 20,
+//            left: 50
+//        },
+//        xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([2000, 2010]),
+//        yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([134, 215]),
+//        xAxis = d3.svg.axis()
+//        .scale(xScale),
+//        yAxis = d3.svg.axis()
+//        .scale(yScale)
+//        .orient("left");
+//
+//    vis.append("svg:g")
+//        .attr("class", "x axis")
+//        .attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
+//        .call(xAxis);
+//    vis.append("svg:g")
+//        .attr("class", "y axis")
+//        .attr("transform", "translate(" + (MARGINS.left) + ",0)")
+//        .call(yAxis);
+//    var lineGen = d3.svg.line()
+//        .x(function(d) {
+//            return xScale(d.date);
+//        })
+//        .y(function(d) {
+//            return yScale(d.count);
+//        })
+//        .interpolate("basis");
+//    vis.append('svg:path')
+//        .attr('d', lineGen(records))
+//        .attr('stroke', 'green')
+//        .attr('stroke-width', 2)
+//        .attr('fill', 'none');
+//    var lineGen = d3.svg.line()
+//        .x(function(d) {
+//            return xScale(d.date);
+//        })
+//        .y(function(d) {
+//            return yScale(d.average_score);
+//        })
+//    vis.append('svg:path')
+//        .attr('d', lineGen(records))
+//        .attr('stroke', 'blue')
+//        .attr('stroke-width', 2)
+//        .attr('fill', 'none');
+//}
