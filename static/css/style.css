@@ -15,12 +15,13 @@
 
 body {
     margin-top: 70px;
+    text-align: center;
 }
 
 .industries-container > input,
 .categories-container > input {
     width: 250px;
-    border: 2px solid #B0C97C;
+    border: 2px solid #98DD98;
 }
 
 .nav-pills {
@@ -40,11 +41,12 @@ body {
     width: 250px;
     padding: 5px;
     text-align: center;
-    color: #B0C97C;
+    color: #98DD98;
 }
 
 .nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
-    background-color: #B0C97C;
+    background-color: #98DD98;
+    font-color: black;
 }
 
 .slider.slider-horizontal {

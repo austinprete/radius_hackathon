@@ -150,26 +150,63 @@ def get_records_by_category():
     return json.dumps(all_records)
 
 
+@app.route('/records-trend')
+def get_trend():
+    category = request.args.get('category')
+    industry = request.args.get('industry')
+    all_records = BomboraRecord.query.filter_by(
+        category=category, industry=industry
+    ).order_by(BomboraRecord.date).all()
+
+    all_records_dict = {
+        'data': []
+    }
+
+    for record in all_records:
+        record_dict = {
+            'date': record.date,
+            'count': record.count,
+            'average_score': record.average_score
+        }
+        all_records_dict['data'].append(record_dict)
+
+    return json.dumps(all_records_dict)
+
+
 @app.route('/players-dashboard')
 def player_dashboard():
-    industry = request.args.get('industry')
-    if industry:
-        one_industry = DashboardBlocks.query.filter_by(industry=industry).first()
-    else:
-        rand_id = randint(1, 23)
-        print "RAND INT", rand_id
-        one_industry = DashboardBlocks.query.get(rand_id)
+    industries_list = [u'Semiconductors', u'Advertising', u'Financial Services', u'Software', u'Pharma & Biotech', u'Aerospace', u'Agricultural Chemicals', u'Air Freight/Delivery Services', u'Aluminum', u'Apparel', u'Auto', u'Beverages (Production/Distribution)', u'Books', u'Broadcasting', u'Building', u'Business Services', u'Catalog/Specialty Distribution', u'Clothing/Shoe/Accessory Stores', u'Coal Mining', u'Commercial Banks', u'Computer Hardware', u'Consumer', u'Containers/Packaging', u'Diversified Commercial Services', u'EDP Services', u'Electronic', u'Engineering / Mfg etc', u'Environmental Services', u'Farming/Seeds/Milling', u'Fluid Controls', u'Food', u'Forest Products', u'General Bldg Contractors - Nonresidential Bldgs', u'Home Furnishings', u'Homebuilding', u'Hospital/Nursing Management', u'Hotels/Resorts', u'Major Chemicals', u'Marine Transportation', u'Meat/Poultry/Fish', u'Medical Specialities', u'Medical/Dental Instruments', u'Medical/Nursing Services', u'Metal Fabrications', u'Military/Government/Technical', u'Mining & Quarrying of Nonmetallic Minerals (No Fuels)', u'Miscellaneous', u'Miscellaneous Manufacturing Industries', u'Motor Vehicles', u'Movies/Entertainment', u'Multi-Sector Companies', u'Natural Gas Distribution', u'Newspapers/Magazines', u'Office Equipment/Supplies/Services', u'Oil', u'Ophthalmic Goods', u'Ordinance And Accessories', u'Other Specialty Stores', u'Other Transportation', u'Package Goods/Cosmetics', u'Paints/Coatings', u'Paper', u'Plastic Products', u'Pollution Control Equipment', u'Power Generation', u'Precious Metals', u'Precision Instruments', u'Professional Services', u'Property-Casualty Insurers', u'Publishing', u'Radio And Television Broadcasting And Communications Equipment', u'Railroads', u'Real Estate', u'Real Estate Investment Trusts', u'Recreational Products/Toys', u'Rental/Leasing Companies', u'Restaurants', u'Retail', u'Savings Institutions', u'Services-Misc. Amusement & Recreation', u'Shoe Manufacturing', u'Specialty Chemicals', u'Specialty Insurers', u'Steel/Iron Ore', u'Telecommunications Equipment', u'Television Services', u'Textiles', u'Tools/Hardware', u'Transportation Services', u'Trucking Freight/Courier Services', u'Water Supply', u'Wholesale Distributors']
+    rand_id = randint(1, 4)
+    print "RAND INT", rand_id
+    one_industry = DashboardBlocks.query.get(rand_id)
 
     dashboard_block = {
         'industry': one_industry.industry,
         'market_cap': one_industry.market_cap,
         'cap_raised': one_industry.cap_raised,
         'cagr': one_industry.cagr,
-        'opportunity': one_industry.opportunity
+        'forecast_spend': one_industry.forecast_spend
     }
 
     return render_template('player-dashboard.html',
-                           dashboard_block=dashboard_block)
+                           dashboard_block=dashboard_block,
+                           industries_list=industries_list)
+
+@app.route('/get-dashboard')
+def get_dashboard():
+    industry = request.args.get('industry').replace('_', ' ').replace('%26', '&')
+    one_industry = DashboardBlocks.query.filter_by(industry=industry).first()
+
+    dashboard_block = {
+        'industry': one_industry.industry,
+        'market_cap': one_industry.market_cap,
+        'cap_raised': one_industry.cap_raised,
+        'cagr': one_industry.cagr,
+        'forecast_spend': one_industry.forecast_spend
+    }
+
+    return json.dumps(dashboard_block)
+
 
 if __name__ == "__main__":
 

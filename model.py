@@ -31,10 +31,10 @@ class DashboardBlocks(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     industry = db.Column(db.Text, nullable=False, unique=True)
-    market_cap = db.Column(db.Integer, nullable=False)
-    cap_raised = db.Column(db.Integer, nullable=False)
-    opportunity = db.Column(db.Integer, nullable=False)
-    cagr = db.Column(db.Float, nullable=False)
+    market_cap = db.Column(db.Integer)
+    cap_raised = db.Column(db.Integer)
+    forecast_spend = db.Column(db.Integer)
+    cagr = db.Column(db.Float)
 
     def __repr__(self):
         return "<Industry Facts: %s>" % self.id

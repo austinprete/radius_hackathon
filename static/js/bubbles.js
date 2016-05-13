@@ -13,7 +13,9 @@ $(document).ready(function () {
             console.log(slideEvt.value);
         });
     });
-
+    $('#find-industry-dashboard').on('click', function() {
+        getDashboardBlocks();
+    })
     // slider
     createDateSlider();
 });
@@ -75,6 +77,43 @@ function getRecordsbyCategory() {
         var records = JSON.parse(data);
         console.log(records);
         activateD3(records, 'category');
+     })
+}
+
+function getDashboardBlocks() {
+    var industry = $('#dashboard-industry').val().split(' ').join('_').split('&').join('%26');
+    var url = "/get-dashboard?industry=" + industry;
+    console.log(url);
+    $.ajax({
+        url: url
+    })
+     .done(function(data) {
+        var record = JSON.parse(data);
+        if (record.market_cap) {
+            var market_cap = '$' + Math.round(record.market_cap / 1000000000)
+        } else {
+            var market_cap = '$--'
+        }
+        if (record.cap_raised) {
+            var cap_raised = '$'+ Math.round(record.cap_raised / 1000000000)
+        } else {
+            var cap_raised = '$--'
+        }
+        if (record.forecast_spend) {
+            var forecast = '$' + record.forecast_spend
+        } else {
+            var forecast = '$--'
+        }
+        if (record.cagr) {
+            var cagr = record.cagr + '%'
+        } else {
+            var cagr = '--%'
+        }
+        $('#market-cap').text(market_cap);
+        $('#cap-raised').text(cap_raised);
+        $('#forecast').text(forecast);
+        $('#cagr').text(cagr);
+        $('.dashboard-header').text(record.industry);
      })
 }
 
