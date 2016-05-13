@@ -150,7 +150,7 @@ function activateD3(root, search_by){
   // } else {
   //   return "#799242";
 //   // }
-}
+// }
 
 // Returns a flattened hierarchy containing all leaf nodes under the root.
 function classes(root, search_by) {
