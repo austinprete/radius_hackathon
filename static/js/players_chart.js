@@ -22,12 +22,12 @@ function getDashboardBlocks() {
      .done(function(data) {
         var record = JSON.parse(data);
         if (record.market_cap) {
-            var market_cap = '$' + Math.round(record.market_cap / 1000000000)
+            var market_cap = '$' + (record.market_cap / 1000000000).toFixed(1)
         } else {
             var market_cap = '$--'
         }
         if (record.cap_raised) {
-            var cap_raised = '$'+ Math.round(record.cap_raised / 1000000000)
+            var cap_raised = '$'+ (record.cap_raised / 1000000).toFixed(1)
         } else {
             var cap_raised = '$--'
         }

@@ -117,3 +117,14 @@ body {
     font-size: 23px;
     font-family: 'Fjalla One', Arial, serif;
 }
+
+input {
+    border-radius: 5px;
+}
+
+button {
+    background-color: #98DD98;
+    border: none;
+    color: #666666;
+    border-radius: 4px;
+}

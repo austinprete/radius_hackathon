@@ -177,8 +177,8 @@ def get_market_share_for_subcategory():
     return json.dumps(top_ten_players)
 
 
-@app.route('/player_dashboard')
-def player_dashboard():
+@app.route('/market_view')
+def market_view():
     industries_list = [u'Semiconductors', u'Advertising', u'Financial Services', u'Software', u'Pharma & Biotech',
                        u'Aerospace', u'Agricultural Chemicals', u'Air Freight/Delivery Services', u'Aluminum',
                        u'Apparel', u'Auto', u'Beverages (Production/Distribution)', u'Books', u'Broadcasting',
