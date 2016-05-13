@@ -116,7 +116,7 @@ function activateD3(root, search_by){
 
     node.append("circle")
       .attr("r", function(d) { return d.r; })
-      .style("fill", function(d) { return ("hsl(120, 50%, " + ((d.average_score) + 38) + "%)")})
+      .style("fill", function(d) { return "hsl(120, 50%, " + ((d.average_score) + 38) + "%)"; })
       .on("mouseover", function(d) {
               tooltip.text(d.className + ": " + format(d.value));
               tooltip.style("visibility", "visible");
