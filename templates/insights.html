@@ -4,22 +4,25 @@
   {{ super() }}
 <!--nav pills-->
   <ul class="nav nav-pills">
-    <li role="presentation" class="active">
+    <li role="presentation" class="active" id="industry-tab">
       <a href="#by-industry" aria-controls="by-industry" role="tab" data-toggle="tab">Choose Industry</a>
     </li>
-    <li role="presentation">
+    <li role="presentation" id="category-tab">
       <a href="#by-category" aria-controls="by-category" role="tab" data-toggle="tab">Choose category</a>
     </li>
   </ul>
   <!--nav pill panes-->
     <div class="container">
+        <span style="position: relative; color: #8d8d8d;">Oldest</span>
+        <span style="position: relative; color: #8d8d8d; float: right">Newest</span>
         <input id="date-slider" type="text" data-slider-orientation="horizontal"
                data-number-of-dates="{{ number_of_dates }}"/>
       </div>
+    <br>
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane fade in active" id="by-industry">
       <div class="container industries-container">
-        <button id="find-industry">Go</button>
+        <button class="find-button" id="find-industry">Go</button>
         <input list="industries" name="industry" id="industry">
         <datalist id="industries">
           {% for item in industries %}
@@ -32,7 +35,7 @@
     <!-- separates tabs -->
     <div role="tabpanel" class="tab-pane" id="by-category">
       <div class="container categories-container">
-      <button id="find-category">Go</button>
+      <button class="find-button" id="find-category">Go</button>
         <input list="categories" name="category" id="category">
         <datalist id="categories">
           {% for item in categories %}
